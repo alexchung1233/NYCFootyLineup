@@ -62,7 +62,7 @@ export default function SoccerLineup() {
         <div>
           <label className="font-semibold">Guys (one per line. Min 4):</label>
           <textarea
-            className="w-full border p-2 mt-1"
+            className="w-full border p-2 px-4 mt-1"
             rows="10"
             value={guysInput}
             onChange={(e) => setGuysInput(e.target.value)}
@@ -72,7 +72,7 @@ export default function SoccerLineup() {
         <div>
           <label className="font-semibold">Girls (one per line. Min 2):</label>
           <textarea
-            className="w-full border p-2 mt-1"
+            className="w-full border p-2 px-4 mt-1"
             rows="10"
             value={girlsInput}
             onChange={(e) => setGirlsInput(e.target.value)}
