@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import playersData from './heat-wave-players.json';
 
 export default function SoccerLineup() {
-  let num_current_attackers = 0;
-  let num_current_defenders = 0;
 
   const [guysInput, setGuysInput] = useState("");
   const [girlsInput, setGirlsInput] = useState("");
@@ -18,28 +16,48 @@ export default function SoccerLineup() {
   const balancePositions = (players) => {
     const defenders = players.filter(p => p.includes("- Defender"));
     const attackers = players.filter(p => p.includes("- Attacker"));
-    while (num_current_attackers > 3 ) {
+    let num_current_attackers = attackers.length;
+    let num_current_defenders = defenders.length;
+    
+    while (num_current_attackers > 3 && attackers.length > 0) {  // Added check for attackers.length
       // get random attacker
-      const randomAttacker = attackers[Math.floor(Math.random() * attackers.length)];
+      const randomIndex = Math.floor(Math.random() * attackers.length);
+      let randomAttacker = attackers[randomIndex];
+      
       // remove attacker from attackers
-      attackers.splice(attackers.indexOf(randomAttacker), 1);
-      // add attacker to defenders
+      attackers.splice(randomIndex, 1);
+      
+      // change role to defender
+      randomAttacker = randomAttacker.replace("- Attacker", "- Defender");
+      
+      // add modified attacker to defenders
       defenders.push(randomAttacker);
+      
       // update num_current_attackers
       num_current_attackers--;
     }
-    while (num_current_defenders > 3 ) {
+    
+    while (num_current_defenders > 3 && defenders.length > 0) {  // Added check for defenders.length
       // get random defender
-      const randomDefender = defenders[Math.floor(Math.random() * defenders.length)];
+      const randomIndex = Math.floor(Math.random() * defenders.length);
+      let randomDefender = defenders[randomIndex];
+      
       // remove defender from defenders
-      defenders.splice(defenders.indexOf(randomDefender), 1);
-      // add defender to attackers
+      defenders.splice(randomIndex, 1);
+      
+      // change role to attacker
+      randomDefender = randomDefender.replace("- Defender", "- Attacker");
+      
+      // add modified defender to attackers
       attackers.push(randomDefender);
+      
       // update num_current_defenders
       num_current_defenders--;
     }
+
+    
     return [...defenders, ...attackers];
-  };
+};
 
   const shuffle = (arr) => {
     const a = [...arr];
@@ -84,11 +102,6 @@ export default function SoccerLineup() {
         .map(line => {
           const [name, role] = line.split(" - ").map(x => x.trim());
           const finalRole = role === "ANYTHING" ? getRandomRole() : role;
-          if (finalRole === "Attacker") {
-            num_current_attackers++;
-          } else if (finalRole === "Defender") {
-            num_current_defenders++;
-          }
           return `${name} - ${finalRole}`;
         })
         .filter(Boolean);
@@ -105,6 +118,8 @@ export default function SoccerLineup() {
     const tableFirstHalfGirls = sortByPosition(shuffledFirstHalfGirls.slice(0, 2));
     const tableFirstHalfRemainingGirls = sortByPosition(shuffledFirstHalfGirls.slice(2, girls.length));
 
+    const tableFirstHalfBalanced = balancePositions([...tableFirstHalfGuys, ...tableFirstHalfGirls]);
+
     const shuffledSecondHalfGuys = shuffle(guys);
     const shuffledSecondHalfGirls = shuffle(girls);
 
@@ -113,10 +128,12 @@ export default function SoccerLineup() {
     const tableSecondHalfGirls = sortByPosition(shuffledSecondHalfGirls.slice(0, 2));
     const tableSecondHalfRemainingGirls = sortByPosition(shuffledSecondHalfGirls.slice(2, girls.length));
 
+    const tableSecondHalfBalanced = balancePositions([...tableSecondHalfGuys, ...tableSecondHalfGirls]);
+
     setLineup({
-      firstHalf: sortByPosition([...tableFirstHalfGuys, ...tableFirstHalfGirls]),
+      firstHalf: sortByPosition(tableFirstHalfBalanced),
       firstHalfRemainingPeople: sortByPosition([...tableFirstHalfRemainingGuys, ...tableFirstHalfRemainingGirls]),
-      secondHalf: sortByPosition([...tableSecondHalfGuys, ...tableSecondHalfGirls]),
+      secondHalf: sortByPosition(tableSecondHalfBalanced),
       secondHalfRemainingPeople: sortByPosition([...tableSecondHalfRemainingGuys, ...tableSecondHalfRemainingGirls]),
     });
   };
@@ -133,7 +150,7 @@ export default function SoccerLineup() {
         <br />
         The input is just for field players (so minimum of 4 guys and 2 girls). <br />
         <br />
-        The goalkeepers are not included. <br />
+        The goalkeepers are not included. Players with "ANYTHING" role are randomly assigned to defenders or attackers. <br />
       </p>
       <button
         onClick={handleLoadPlayers}
