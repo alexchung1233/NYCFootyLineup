@@ -18,8 +18,8 @@ export default function SoccerLineup() {
     const guys = guysInput.split("\n").map((x) => x.trim()).filter(Boolean);
     const girls = girlsInput.split("\n").map((x) => x.trim()).filter(Boolean);
 
-    if (guys.length < 5 || girls.length < 2 ) {
-      alert("Need at least 5 guys and 2 girls!");
+    if (guys.length < 4 || girls.length < 2 ) {
+      alert("Need at least 4 guys and 2 girls!");
       return;
     }
 
@@ -49,11 +49,18 @@ export default function SoccerLineup() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Soccer Lineup Selector</h1>
+      <h1 className="text-2xl font-bold mb-4">NYCFooty Lineup Generator</h1>
+      <p className="text-sm text-gray-500 mb-4">
+        This is made for a 7 vs 7 game - 5 guys and 2 girls per half. <br />
+        <br />
+        The input is just for field players (so minimum of 4 guys and 2 girls). <br />
+        <br />
+        The goalkeepers are not included. <br />
+      </p>
   
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="font-semibold">Guys (one per line):</label>
+          <label className="font-semibold">Guys (one per line. Min 4):</label>
           <textarea
             className="w-full border p-2 mt-1"
             rows="10"
@@ -63,7 +70,7 @@ export default function SoccerLineup() {
         </div>
   
         <div>
-          <label className="font-semibold">Girls (one per line):</label>
+          <label className="font-semibold">Girls (one per line. Min 2):</label>
           <textarea
             className="w-full border p-2 mt-1"
             rows="10"
