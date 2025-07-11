@@ -2,9 +2,44 @@ import React, { useState } from "react";
 import playersData from './heat-wave-players.json';
 
 export default function SoccerLineup() {
+  let num_current_attackers = 0;
+  let num_current_defenders = 0;
+
   const [guysInput, setGuysInput] = useState("");
   const [girlsInput, setGirlsInput] = useState("");
   const [lineup, setLineup] = useState(null);
+
+  const handleClear = () => {
+    setGuysInput("");
+    setGirlsInput("");
+    setLineup(null);
+  };
+
+  const balancePositions = (players) => {
+    const defenders = players.filter(p => p.includes("- Defender"));
+    const attackers = players.filter(p => p.includes("- Attacker"));
+    while (num_current_attackers > 3 ) {
+      // get random attacker
+      const randomAttacker = attackers[Math.floor(Math.random() * attackers.length)];
+      // remove attacker from attackers
+      attackers.splice(attackers.indexOf(randomAttacker), 1);
+      // add attacker to defenders
+      defenders.push(randomAttacker);
+      // update num_current_attackers
+      num_current_attackers--;
+    }
+    while (num_current_defenders > 3 ) {
+      // get random defender
+      const randomDefender = defenders[Math.floor(Math.random() * defenders.length)];
+      // remove defender from defenders
+      defenders.splice(defenders.indexOf(randomDefender), 1);
+      // add defender to attackers
+      attackers.push(randomDefender);
+      // update num_current_defenders
+      num_current_defenders--;
+    }
+    return [...defenders, ...attackers];
+  };
 
   const shuffle = (arr) => {
     const a = [...arr];
@@ -49,6 +84,11 @@ export default function SoccerLineup() {
         .map(line => {
           const [name, role] = line.split(" - ").map(x => x.trim());
           const finalRole = role === "ANYTHING" ? getRandomRole() : role;
+          if (finalRole === "Attacker") {
+            num_current_attackers++;
+          } else if (finalRole === "Defender") {
+            num_current_defenders++;
+          }
           return `${name} - ${finalRole}`;
         })
         .filter(Boolean);
@@ -57,24 +97,19 @@ export default function SoccerLineup() {
     const guys = processPlayers(guysInput);
     const girls = processPlayers(girlsInput);
 
-    if (guys.length < 4 || girls.length < 2) {
-      alert("Need at least 4 guys and 2 girls!");
-      return;
-    }
-
     const shuffledFirstHalfGuys = shuffle(guys);
     const shuffledFirstHalfGirls = shuffle(girls);
 
-    const tableFirstHalfGuys = sortByPosition(shuffledFirstHalfGuys.slice(0, 5));
-    const tableFirstHalfRemainingGuys = sortByPosition(shuffledFirstHalfGuys.slice(5, guys.length));
+    const tableFirstHalfGuys = sortByPosition(shuffledFirstHalfGuys.slice(0, 4));  // Changed from 5 to 4
+    const tableFirstHalfRemainingGuys = sortByPosition(shuffledFirstHalfGuys.slice(4, guys.length));  // Changed from 5 to 4
     const tableFirstHalfGirls = sortByPosition(shuffledFirstHalfGirls.slice(0, 2));
     const tableFirstHalfRemainingGirls = sortByPosition(shuffledFirstHalfGirls.slice(2, girls.length));
 
     const shuffledSecondHalfGuys = shuffle(guys);
     const shuffledSecondHalfGirls = shuffle(girls);
 
-    const tableSecondHalfGuys = sortByPosition(shuffledSecondHalfGuys.slice(0, 5));
-    const tableSecondHalfRemainingGuys = sortByPosition(shuffledSecondHalfGuys.slice(5, guys.length));
+    const tableSecondHalfGuys = sortByPosition(shuffledSecondHalfGuys.slice(0, 4));  // Changed from 5 to 4
+    const tableSecondHalfRemainingGuys = sortByPosition(shuffledSecondHalfGuys.slice(4, guys.length));  // Changed from 5 to 4
     const tableSecondHalfGirls = sortByPosition(shuffledSecondHalfGirls.slice(0, 2));
     const tableSecondHalfRemainingGirls = sortByPosition(shuffledSecondHalfGirls.slice(2, girls.length));
 
@@ -94,7 +129,7 @@ export default function SoccerLineup() {
 
 
       <p className="text-sm text-gray-500 mb-4">
-        This is made for a 7 vs 7 game - 5 guys and 2 girls per half. Used for the Heat Wave team but can be used for any team.<br />
+        This is made for a 7 vs 7 game - min 2 girls per half. Used for the Heat Wave team but can be used for any team.<br />
         <br />
         The input is just for field players (so minimum of 4 guys and 2 girls). <br />
         <br />
@@ -105,6 +140,12 @@ export default function SoccerLineup() {
         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-4"
       >
         Load Heat Wave Players
+      </button>
+      <button
+        onClick={handleClear}
+        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mb-4 ml-2"
+      >
+        Clear
       </button>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
