@@ -94,7 +94,7 @@ export default function SoccerLineup() {
 
 
       <p className="text-sm text-gray-500 mb-4">
-        This is made for a 7 vs 7 game - 5 guys and 2 girls per half. <br />
+        This is made for a 7 vs 7 game - 5 guys and 2 girls per half. Used for the Heat Wave team but can be used for any team.<br />
         <br />
         The input is just for field players (so minimum of 4 guys and 2 girls). <br />
         <br />
