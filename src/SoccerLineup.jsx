@@ -23,21 +23,34 @@ export default function SoccerLineup() {
       return;
     }
 
-    const shuffledGuys = shuffle(guys);
-    const shuffledGirls = shuffle(girls);
+    const shuffledFirstHalfGuys = shuffle(guys);
+    const shuffledFirstHalfGirls = shuffle(girls);
 
-    const tableGuys = shuffledGuys.slice(0, 5);
-    const tableGirls = shuffledGirls.slice(0, 2);
+    const tableFirstHalfGuys = shuffledFirstHalfGuys.slice(0, 5);
+    const tableFirstHalfRemainingGuys = shuffledFirstHalfGuys.slice(5, guys.length);
+    const tableFirstHalfGirls = shuffledFirstHalfGirls.slice(0, 2);
+    const tableFirstHalfRemainingGirls = shuffledFirstHalfGirls.slice(2, girls.length);
+
+    const shuffledSecondHalfGuys = shuffle(guys);
+    const shuffledSecondHalfGirls = shuffle(girls);
+
+    const tableSecondHalfGuys = shuffledSecondHalfGuys.slice(0, 5);
+    const tableSecondHalfRemainingGuys = shuffledSecondHalfGuys.slice(5, guys.length);
+    const tableSecondHalfGirls = shuffledSecondHalfGirls.slice(0, 2);
+    const tableSecondHalfRemainingGirls = shuffledSecondHalfGirls.slice(2, girls.length);
 
     setLineup({
-      firstHalf: [...tableGuys, ...tableGirls],
+      firstHalf: [...tableFirstHalfGuys, ...tableFirstHalfGirls],
+      firstHalfRemainingPeople: [...tableFirstHalfRemainingGuys, ...tableFirstHalfRemainingGirls],
+      secondHalf: [...tableSecondHalfGuys, ...tableSecondHalfGirls],
+      secondHalfRemainingPeople: [...tableSecondHalfRemainingGuys, ...tableSecondHalfRemainingGirls],
     });
   };
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Soccer Lineup Selector</h1>
-
+  
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label className="font-semibold">Guys (one per line):</label>
@@ -48,7 +61,7 @@ export default function SoccerLineup() {
             onChange={(e) => setGuysInput(e.target.value)}
           ></textarea>
         </div>
-
+  
         <div>
           <label className="font-semibold">Girls (one per line):</label>
           <textarea
@@ -59,25 +72,57 @@ export default function SoccerLineup() {
           ></textarea>
         </div>
       </div>
-
+  
       <button
         onClick={handleGenerate}
         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
       >
         Generate Lineup
       </button>
-
+  
       {lineup && (
-        <div className="mt-8">
-          <h2 className="text-xl font-bold mb-2">Team Lineup</h2>
-          <ul className="list-disc ml-4 mb-4">
-            {lineup.firstHalf.map((name, idx) => (
-              <li key={idx}>{name}</li>
-            ))}
-          </ul>
+        <div className="mt-8 space-y-8">
+          {/* Top row: first & second half lineups side by side */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h2 className="text-xl font-bold mb-2">First Half Lineup</h2>
+              <ul className="list-disc ml-4 mb-4">
+                {lineup.firstHalf.map((name, idx) => (
+                  <li key={idx}>{name}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold mb-2">Second Half Lineup</h2>
+              <ul className="list-disc ml-4 mb-4">
+                {lineup.secondHalf.map((name, idx) => (
+                  <li key={idx}>{name}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+  
+          {/* Bottom row: first & second half remaining people side by side */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h2 className="text-xl font-bold mb-2">First Half Remaining People</h2>
+              <ul className="list-disc ml-4 mb-4">
+                {lineup.firstHalfRemainingPeople.map((name, idx) => (
+                  <li key={idx}>{name}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold mb-2">Second Half Remaining People</h2>
+              <ul className="list-disc ml-4 mb-4">
+                {lineup.secondHalfRemainingPeople.map((name, idx) => (
+                  <li key={idx}>{name}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       )}
     </div>
   );
 }
-
