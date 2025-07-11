@@ -1,0 +1,52 @@
+{
+    "teamName": "Heat Wave",
+    "players": [
+      {
+        "name": "Alex",
+        "role": "Defender",
+        "gender": "MALE"
+      },
+      {
+        "name": "Ramon",
+        "role": "Defender",
+        "gender": "MALE"
+      },
+      {
+        "name": "Cris",
+        "role": "Attacker",
+        "gender": "MALE"
+      },
+      {
+        "name": "John",
+        "role": "Attacker",
+        "gender": "MALE"
+      },
+      {
+        "name": "Zoey",
+        "role": "ANYTHING",
+        "gender": "FEMALE"
+      },
+      {
+        "name": "George",
+        "role": "Goalkeeper",
+        "gender": "MALE"
+      },
+      {
+        "name": "Sherry",
+        "role": "ANYTHING",
+        "gender": "FEMALE"
+      },
+      {
+        "name": "Emma",
+        "role": "ANYTHING",
+        "gender": "FEMALE"
+      },
+      {
+        "name": "Rohei",
+        "role": "Attacker",
+        "gender": "MALE"
+      }
+
+    ]
+  }
+  

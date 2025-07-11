@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import playersData from './heat-wave-players.json';
 
 export default function SoccerLineup() {
   const [guysInput, setGuysInput] = useState("");
@@ -14,11 +15,49 @@ export default function SoccerLineup() {
     return a;
   };
 
-  const handleGenerate = () => {
-    const guys = guysInput.split("\n").map((x) => x.trim()).filter(Boolean);
-    const girls = girlsInput.split("\n").map((x) => x.trim()).filter(Boolean);
+  const getRandomRole = () => {
+    return Math.random() < 0.5 ? "Attacker" : "Defender";
+  };
 
-    if (guys.length < 4 || girls.length < 2 ) {
+  const handleLoadPlayers = () => {
+    const malePlayersText = playersData.players
+      .filter(player => player.gender === "MALE")
+      .map(player => `${player.name} - ${player.role}`)
+      .join('\n');
+
+    const femalePlayersText = playersData.players
+      .filter(player => player.gender === "FEMALE")
+      .map(player => `${player.name} - ${player.role}`)
+      .join('\n');
+
+    setGuysInput(malePlayersText);
+    setGirlsInput(femalePlayersText);
+  };
+
+  const sortByPosition = (players) => {
+    return players.sort((a, b) => {
+      const [, positionA] = a.split(" - ");
+      const [, positionB] = b.split(" - ");
+      // Sort Defenders before Attackers
+      return positionA.localeCompare(positionB);
+    });
+  };
+
+  const handleGenerate = () => {
+    const processPlayers = (input) => {
+      return input.split("\n")
+        .map(line => {
+          const [name, role] = line.split(" - ").map(x => x.trim());
+          const finalRole = role === "ANYTHING" ? getRandomRole() : role;
+          return `${name} - ${finalRole}`;
+        })
+        .filter(Boolean);
+    };
+
+    const guys = processPlayers(guysInput);
+    const girls = processPlayers(girlsInput);
+
+    if (guys.length < 4 || girls.length < 2) {
       alert("Need at least 4 guys and 2 girls!");
       return;
     }
@@ -26,30 +65,34 @@ export default function SoccerLineup() {
     const shuffledFirstHalfGuys = shuffle(guys);
     const shuffledFirstHalfGirls = shuffle(girls);
 
-    const tableFirstHalfGuys = shuffledFirstHalfGuys.slice(0, 5);
-    const tableFirstHalfRemainingGuys = shuffledFirstHalfGuys.slice(5, guys.length);
-    const tableFirstHalfGirls = shuffledFirstHalfGirls.slice(0, 2);
-    const tableFirstHalfRemainingGirls = shuffledFirstHalfGirls.slice(2, girls.length);
+    const tableFirstHalfGuys = sortByPosition(shuffledFirstHalfGuys.slice(0, 5));
+    const tableFirstHalfRemainingGuys = sortByPosition(shuffledFirstHalfGuys.slice(5, guys.length));
+    const tableFirstHalfGirls = sortByPosition(shuffledFirstHalfGirls.slice(0, 2));
+    const tableFirstHalfRemainingGirls = sortByPosition(shuffledFirstHalfGirls.slice(2, girls.length));
 
     const shuffledSecondHalfGuys = shuffle(guys);
     const shuffledSecondHalfGirls = shuffle(girls);
 
-    const tableSecondHalfGuys = shuffledSecondHalfGuys.slice(0, 5);
-    const tableSecondHalfRemainingGuys = shuffledSecondHalfGuys.slice(5, guys.length);
-    const tableSecondHalfGirls = shuffledSecondHalfGirls.slice(0, 2);
-    const tableSecondHalfRemainingGirls = shuffledSecondHalfGirls.slice(2, girls.length);
+    const tableSecondHalfGuys = sortByPosition(shuffledSecondHalfGuys.slice(0, 5));
+    const tableSecondHalfRemainingGuys = sortByPosition(shuffledSecondHalfGuys.slice(5, guys.length));
+    const tableSecondHalfGirls = sortByPosition(shuffledSecondHalfGirls.slice(0, 2));
+    const tableSecondHalfRemainingGirls = sortByPosition(shuffledSecondHalfGirls.slice(2, girls.length));
 
     setLineup({
-      firstHalf: [...tableFirstHalfGuys, ...tableFirstHalfGirls],
-      firstHalfRemainingPeople: [...tableFirstHalfRemainingGuys, ...tableFirstHalfRemainingGirls],
-      secondHalf: [...tableSecondHalfGuys, ...tableSecondHalfGirls],
-      secondHalfRemainingPeople: [...tableSecondHalfRemainingGuys, ...tableSecondHalfRemainingGirls],
+      firstHalf: sortByPosition([...tableFirstHalfGuys, ...tableFirstHalfGirls]),
+      firstHalfRemainingPeople: sortByPosition([...tableFirstHalfRemainingGuys, ...tableFirstHalfRemainingGirls]),
+      secondHalf: sortByPosition([...tableSecondHalfGuys, ...tableSecondHalfGirls]),
+      secondHalfRemainingPeople: sortByPosition([...tableSecondHalfRemainingGuys, ...tableSecondHalfRemainingGirls]),
     });
   };
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">NYCFooty Lineup Generator</h1>
+      
+      {/* Add Load Players button below the title */}
+
+
       <p className="text-sm text-gray-500 mb-4">
         This is made for a 7 vs 7 game - 5 guys and 2 girls per half. <br />
         <br />
@@ -57,7 +100,12 @@ export default function SoccerLineup() {
         <br />
         The goalkeepers are not included. <br />
       </p>
-  
+      <button
+        onClick={handleLoadPlayers}
+        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-4"
+      >
+        Load Heat Wave Players
+      </button>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label className="font-semibold">Guys (one per line. Min 4):</label>
