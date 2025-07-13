@@ -45,6 +45,26 @@
         "name": "Rohei",
         "role": "Attacker",
         "gender": "MALE"
+      },
+      {
+        "name": "Monica",
+        "role": "ANYTHING",
+        "gender": "FEMALE"
+      },
+      {
+        "name": "Teoman",
+        "role": "Attacker",
+        "gender": "MALE"
+      },
+      {
+        "name": "Surya",
+        "role": "ANYTHING",
+        "gender": "MALE"
+      },
+      {
+        "name": "Mobi",
+        "role": "Attacker",
+        "gender": "MALE"
       }
 
     ]

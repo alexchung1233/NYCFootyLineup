@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import playersData from './heat-wave-players.json';
+import './SoccerLineup.css';
 
 export default function SoccerLineup() {
 
@@ -139,103 +140,161 @@ export default function SoccerLineup() {
   };
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">NYCFooty Lineup Generator</h1>
-      
-      {/* Add Load Players button below the title */}
+    <div className="container">
+      <div className="main-content">
+        <h1 className="text-2xl font-bold mb-4">NYCFooty Lineup Generator</h1>
+        
+        <p className="text-sm text-gray-500 mb-4">
+          This is made for a 7 vs 7 game - min 2 girls per half. Used for the Heat Wave team but can be used for any team.<br />
+          <br />
+          The input is just for field players (so minimum of 4 guys and 2 girls). <br />
+          <br />
+          The goalkeepers are not included. Players with "ANYTHING" role are randomly assigned to defenders or attackers. <br />
+        </p>
 
+        <div className="mb-4">
+          <button onClick={handleLoadPlayers} className="button button-success mr-2">
+            Load Heat Wave Players
+          </button>
+          <button onClick={handleClear} className="button button-danger">
+            Clear
+          </button>
+        </div>
 
-      <p className="text-sm text-gray-500 mb-4">
-        This is made for a 7 vs 7 game - min 2 girls per half. Used for the Heat Wave team but can be used for any team.<br />
-        <br />
-        The input is just for field players (so minimum of 4 guys and 2 girls). <br />
-        <br />
-        The goalkeepers are not included. Players with "ANYTHING" role are randomly assigned to defenders or attackers. <br />
-      </p>
-      <button
-        onClick={handleLoadPlayers}
-        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-4"
-      >
-        Load Heat Wave Players
-      </button>
-      <button
-        onClick={handleClear}
-        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mb-4 ml-2"
-      >
-        Clear
-      </button>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div>
-          <label className="font-semibold">Guys (one per line. Min 4):</label>
-          <textarea
-            className="w-full border p-2 px-4 mt-1"
-            rows="10"
-            value={guysInput}
-            onChange={(e) => setGuysInput(e.target.value)}
-          ></textarea>
+        <div className="input-area">
+          <div>
+            <label className="font-semibold">Guys (one per line. Min 4):</label>
+            <textarea
+              className="textarea"
+              value={guysInput}
+              onChange={(e) => setGuysInput(e.target.value)}
+            ></textarea>
+          </div>
+          <div>
+            <label className="font-semibold">Girls (one per line. Min 2):</label>
+            <textarea
+              className="textarea"
+              value={girlsInput}
+              onChange={(e) => setGirlsInput(e.target.value)}
+            ></textarea>
+          </div>
         </div>
-  
-        <div>
-          <label className="font-semibold">Girls (one per line. Min 2):</label>
-          <textarea
-            className="w-full border p-2 px-4 mt-1"
-            rows="10"
-            value={girlsInput}
-            onChange={(e) => setGirlsInput(e.target.value)}
-          ></textarea>
-        </div>
+
+        <button onClick={handleGenerate} className="button button-primary">
+          Generate Lineup
+        </button>
+
+        {lineup && (
+          <div className="mt-4 space-y-4">
+            {/* First row: First Half and Second Half */}
+            <div className="lineup-grid">
+              <div>
+                <h2 className="lineup-header">First Half Players</h2>
+                <div className="table-container">
+                  <table className="lineup-table">
+                    <thead>
+                      <tr>
+                        <th>Player</th>
+                        <th>Position</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lineup.firstHalf.map((player, idx) => {
+                        const [name, position] = player.split(" - ");
+                        return (
+                          <tr key={idx}>
+                            <td>{name}</td>
+                            <td>{position}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div>
+                <h2 className="lineup-header">Second Half Players</h2>
+                <div className="table-container">
+                  <table className="lineup-table">
+                    <thead>
+                      <tr>
+                        <th>Player</th>
+                        <th>Position</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lineup.secondHalf.map((player, idx) => {
+                        const [name, position] = player.split(" - ");
+                        return (
+                          <tr key={idx}>
+                            <td>{name}</td>
+                            <td>{position}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* Second row: Remaining Players for both halves */}
+            <div className="lineup-grid">
+              <div>
+                <h2 className="lineup-header">First Half Remaining Players</h2>
+                <div className="table-container">
+                  <table className="lineup-table">
+                    <thead>
+                      <tr>
+                        <th>Player</th>
+                        <th>Position</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lineup.firstHalfRemainingPeople.map((player, idx) => {
+                        const [name, position] = player.split(" - ");
+                        return (
+                          <tr key={idx}>
+                            <td>{name}</td>
+                            <td>{position}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div>
+                <h2 className="lineup-header">Second Half Remaining Players</h2>
+                <div className="table-container">
+                  <table className="lineup-table">
+                    <thead>
+                      <tr>
+                        <th>Player</th>
+                        <th>Position</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lineup.secondHalfRemainingPeople.map((player, idx) => {
+                        const [name, position] = player.split(" - ");
+                        return (
+                          <tr key={idx}>
+                            <td>{name}</td>
+                            <td>{position}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-  
-      <button
-        onClick={handleGenerate}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Generate Lineup
-      </button>
-  
-      {lineup && (
-        <div className="mt-8 space-y-8">
-          {/* Top row: first & second half lineups side by side */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h2 className="text-xl font-bold mb-2">First Half Lineup</h2>
-              <ul className="list-disc ml-4 mb-4">
-                {lineup.firstHalf.map((name, idx) => (
-                  <li key={idx}>{name}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold mb-2">Second Half Lineup</h2>
-              <ul className="list-disc ml-4 mb-4">
-                {lineup.secondHalf.map((name, idx) => (
-                  <li key={idx}>{name}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-  
-          {/* Bottom row: first & second half remaining people side by side */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h2 className="text-xl font-bold mb-2">First Half Remaining People</h2>
-              <ul className="list-disc ml-4 mb-4">
-                {lineup.firstHalfRemainingPeople.map((name, idx) => (
-                  <li key={idx}>{name}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold mb-2">Second Half Remaining People</h2>
-              <ul className="list-disc ml-4 mb-4">
-                {lineup.secondHalfRemainingPeople.map((name, idx) => (
-                  <li key={idx}>{name}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
+      <footer className="footer">
+        Created by Alex Chung (awchung1357@gmail.com)
+      </footer>
     </div>
   );
 }
